@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="template1">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Votre banque</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="col-md-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Consultation d'un compte</div>
+                <div class="panel-body">
+                    <form th:action="@{/consulterCompte}" method="get">
+                        <div class="form-group">
+                            <label for="">Code compte</label>
+                            <input type="text" name="numCompte">
+                            <button type="submit" class="btn btn-primary">ok</button>
+                        </div>
+                    </form>
+                    <div class="text-danger" th:if="${exception}" th:text="${exception.message}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-primary" th:if="${compte}">
+                <div class="panel-heading">Information sur le compte</div>
+                <div class="panel-body">
+                    <div>
+                        <label for="">Client</label>
+                        <label th:text="${compte.client.nom}"></label>
+                    </div>
+                    <div>
+                        <label for="">Code</label>
+                        <label th:text="${compte.client.code}"></label>
+                    </div>
+                    <div>
+                        <label for="">Solde</label>
+                        <label th:text="${compte.solde}"></label>
+                    </div>
+                    <div>
+                        <label for="">Date de création</label>
+                        <label th:text="${compte.dateCreation}"></label>
+                    </div>
+                    <div>
+                        <label for="">Type</label>
+                        <label th:text="${compte}"></label>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-primary" th:if="${compte}">
+                <div class="panel-heading">Opération sur le compte</div>
+                <div class="panel-body">
+                    <form th:action="@{/saveOperation}" method="post">
+                        <div class="form-group">
+                            <label>Compte</label>
+                            <input type="hidden" name="numCompte" th:value="${compte.numCompte}">
+                            <label th:text="${compte.numCompte}"></label>
+                        </div>
+                        <div>
+                            <input type="radio" name="typeOperation" value="V" checked
+                            onchange="document.getElementById('forVirement').style.display='none'"/>
+                            <label>Versement</label>
+                            <input type="radio" name="typeOperation" value="R"
+                                   onchange="document.getElementById('forVirement').style.display='none'"/>
+                            <label>Retrait</label>
+                            <input type="radio" name="typeOperation" value="VIR"
+                                   onchange="document.getElementById('forVirement').style.display='block'"/>
+                            <label>Virement</label>
+                        </div>
+                        <div id="forVirement" style="display: none">
+                            <label>Vers</label>
+                            <input type="text" name="numCompte2"/>
+                        </div>
+                        <div>
+                            <label>Montant</label>
+                            <input type="text" name="montant"/>
+                        </div>
+                        <div class="text-danger" th:text="${#httpServletRequest.getParameter('Errror')}">
+
+                        </div>
+                        <button type="submit" class="btn btn-primary">save</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="panel panel-primary" th:if="${compte}">
+                <div class="panel-heading">Liste des opérations</div>
+                <div class="panel-body">
+                    <table class="table table-bordered table-striped">
+                        <tr>
+                            <th>Num</th><th>Date</th><th>Montant</th><th>Type</th>
+                        </tr>
+                        <tr th:each="o:${listeOperations}">
+                            <td th:text="${o.numOperation}"></td>
+                            <td th:text="${o.dateOperation}"></td>
+                            <td th:text="${o.montant}"></td>
+                            <td th:text="${o}"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
